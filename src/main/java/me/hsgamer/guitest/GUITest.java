@@ -6,6 +6,11 @@ import me.hsgamer.hscore.bukkit.gui.GUIListener;
 import me.hsgamer.hscore.bukkit.gui.button.AnimatedButton;
 import me.hsgamer.hscore.bukkit.gui.button.DummyButton;
 import me.hsgamer.hscore.bukkit.gui.button.SimpleButton;
+import me.hsgamer.hscore.bukkit.item.ItemBuilder;
+import me.hsgamer.hscore.bukkit.item.modifier.AmountModifier;
+import me.hsgamer.hscore.bukkit.item.modifier.LoreModifier;
+import me.hsgamer.hscore.bukkit.item.modifier.MaterialModifier;
+import me.hsgamer.hscore.bukkit.item.modifier.NameModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -142,7 +147,21 @@ public final class GUITest extends JavaPlugin {
     private void initRandomHolder() {
         randomHolder.init();
         randomHolder.setTitle("Random");
-        randomHolder.setButton(0, new DummyButton(new ItemStack(Material.DIAMOND_SWORD)));
+        randomHolder.setButton(0, new DynamicDummyButton(
+                new ItemBuilder()
+                        .setStringReplacer((original, uuid) -> original.replace("{player}", Bukkit.getOfflinePlayer(uuid).getName()))
+                        .addItemModifier(new MaterialModifier().setMaterial(Material.DIAMOND_SWORD))
+                        .addItemModifier(new NameModifier().setName("Hello {player}"))
+                        .addItemModifier(new AmountModifier().setAmount(34))
+                        .addItemModifier(new LoreModifier()
+                                .addLore("")
+                                .addLore("This is a lore")
+                                .addLore("")
+                                .addLore("This is another lore")
+                                .addLore("")
+                                .addLore("Viewer: {player}")
+                        )
+        ));
         randomHolder.setButton(1, new AnimatedButton(
                 this, 0, false,
                 new SimpleButton(new ItemStack(Material.STONE), (uuid, inventoryClickEvent) -> inventoryClickEvent.getWhoClicked().sendMessage("Click 1")),
