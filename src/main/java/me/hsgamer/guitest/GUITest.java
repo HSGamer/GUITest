@@ -17,6 +17,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public final class GUITest extends JavaPlugin {
 
     private final CommandManager commandManager = new CommandManager(this);
@@ -36,9 +38,25 @@ public final class GUITest extends JavaPlugin {
             getLogger().info(event.getPlayer().getName() + " closed the menu");
         }
     };
+    private final GUIHolder randomHolder = new GUIHolder(this) {
+        @Override
+        public void onOpen(InventoryOpenEvent event) {
+            getLogger().info(event.getPlayer().getName() + " opened the random menu");
+        }
 
-    @Override
-    public void onEnable() {
+        @Override
+        public void onClick(InventoryClickEvent event) {
+            getLogger().info(event.getWhoClicked().getName() + " clicked the random menu");
+        }
+
+        @Override
+        public void onClose(InventoryCloseEvent event) {
+            getLogger().info(event.getPlayer().getName() + " closed the random menu");
+        }
+    };
+
+    private void initHolder() {
+        holder.init();
         holder.setCloseFilter(uuid -> {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
@@ -53,7 +71,6 @@ public final class GUITest extends JavaPlugin {
                 return false;
             }
         });
-
         holder.setSize(54);
         holder.setTitleFunction(uuid -> "Hello " + Bukkit.getOfflinePlayer(uuid).getName());
         holder.setButton(0, new DummyButton(new ItemStack(Material.STONE)));
@@ -75,10 +92,16 @@ public final class GUITest extends JavaPlugin {
                 new DummyButton(new ItemStack(Material.DIAMOND_SWORD))
         );
 
-        for (int i = 27; i < 35; i++) {
+        for (int i = 27; i < 34; i++) {
             holder.setButton(i, animatedButton);
         }
 
+        holder.setButton(34, new SimpleButton(new ItemStack(Material.PAPER), (uuid, inventoryClickEvent) ->
+                holder.getDisplay(uuid).ifPresent(guiDisplay -> {
+                    guiDisplay.setForceUpdate(!guiDisplay.isForceUpdate());
+                    inventoryClickEvent.getWhoClicked().sendMessage("State switched to " + guiDisplay.isForceUpdate());
+                })
+        ));
         holder.setButton(35, new SimpleButton(new ItemStack(Material.BARRIER), (uuid, event) -> event.getWhoClicked().closeInventory()));
 
         for (int i = 36; i < 45; i++) {
@@ -113,14 +136,51 @@ public final class GUITest extends JavaPlugin {
             ));
         }
 
-        Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, holder::update, 0, 0);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, holder::update, 0, 0);
+    }
 
+    private void initRandomHolder() {
+        randomHolder.init();
+        randomHolder.setTitle("Random");
+        randomHolder.setButton(0, new DummyButton(new ItemStack(Material.DIAMOND_SWORD)));
+        randomHolder.setButton(1, new AnimatedButton(
+                this, 0, false,
+                new SimpleButton(new ItemStack(Material.STONE), (uuid, inventoryClickEvent) -> inventoryClickEvent.getWhoClicked().sendMessage("Click 1")),
+                new SimpleButton(new ItemStack(Material.SAND), (uuid, inventoryClickEvent) -> inventoryClickEvent.getWhoClicked().sendMessage("Click 2")),
+                new SimpleButton(new ItemStack(Material.GLASS), (uuid, inventoryClickEvent) -> inventoryClickEvent.getWhoClicked().sendMessage("Click 3"))
+        ));
+        randomHolder.addEventConsumer(InventoryClickEvent.class, event -> randomHolder.getButton(event.getRawSlot()).ifPresent(button -> {
+            randomHolder.removeButton(event.getRawSlot());
+            int slot;
+            do {
+                slot = ThreadLocalRandom.current().nextInt(0, randomHolder.getSize());
+            } while (randomHolder.getButton(slot).isPresent());
+            randomHolder.setButton(slot, button);
+        }));
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, randomHolder::update, 0, 0);
+    }
+
+    @Override
+    public void onEnable() {
+        Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
+
+        initHolder();
         commandManager.register(new BukkitCommand("guitest") {
             @Override
             public boolean execute(CommandSender sender, String commandLabel, String[] args) {
                 if (sender instanceof Player) {
-                    holder.createDisplay(((Player) sender).getUniqueId()).setForceUpdate(true).init();
+                    holder.createDisplay(((Player) sender).getUniqueId()).setForceUpdate(false).init();
+                }
+                return true;
+            }
+        });
+
+        initRandomHolder();
+        commandManager.register(new BukkitCommand("guitestrandom") {
+            @Override
+            public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+                if (sender instanceof Player) {
+                    randomHolder.createDisplay(((Player) sender).getUniqueId()).setForceUpdate(true).init();
                 }
                 return true;
             }
@@ -129,7 +189,9 @@ public final class GUITest extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Bukkit.getScheduler().cancelTasks(this);
         commandManager.unregisterAll();
         holder.stop();
+        randomHolder.stop();
     }
 }
