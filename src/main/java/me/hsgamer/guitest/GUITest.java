@@ -11,6 +11,7 @@ import me.hsgamer.hscore.bukkit.item.modifier.AmountModifier;
 import me.hsgamer.hscore.bukkit.item.modifier.LoreModifier;
 import me.hsgamer.hscore.bukkit.item.modifier.MaterialModifier;
 import me.hsgamer.hscore.bukkit.item.modifier.NameModifier;
+import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -149,17 +150,17 @@ public final class GUITest extends JavaPlugin {
         randomHolder.setTitle("Random");
         randomHolder.setButton(0, new DynamicDummyButton(
                 new ItemBuilder()
-                        .setStringReplacer((original, uuid) -> original.replace("{player}", Bukkit.getOfflinePlayer(uuid).getName()))
+                        .setStringReplacer((original, uuid) -> MessageUtils.colorize(original.replace("{player}", Bukkit.getOfflinePlayer(uuid).getName())))
                         .addItemModifier(new MaterialModifier().setMaterial(Material.DIAMOND_SWORD))
-                        .addItemModifier(new NameModifier().setName("Hello {player}"))
+                        .addItemModifier(new NameModifier().setName("&cHello &6{player}"))
                         .addItemModifier(new AmountModifier().setAmount(34))
                         .addItemModifier(new LoreModifier()
                                 .addLore("")
                                 .addLore("This is a lore")
                                 .addLore("")
-                                .addLore("This is another lore")
+                                .addLore("&7This is another lore")
                                 .addLore("")
-                                .addLore("Viewer: {player}")
+                                .addLore("&eViewer: &b&l{player}")
                         )
         ));
         randomHolder.setButton(1, new AnimatedButton(
