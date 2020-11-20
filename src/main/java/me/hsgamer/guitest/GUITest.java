@@ -150,7 +150,8 @@ public final class GUITest extends JavaPlugin {
         randomHolder.setTitle("Random");
         randomHolder.setButton(0, new DynamicDummyButton(
                 new ItemBuilder()
-                        .setStringReplacer((original, uuid) -> MessageUtils.colorize(original.replace("{player}", Bukkit.getOfflinePlayer(uuid).getName())))
+                        .addStringReplacer((original, uuid) -> original.replace("{player}", Bukkit.getOfflinePlayer(uuid).getName()))
+                        .addStringReplacer((original, uuid) -> MessageUtils.colorize(original))
                         .addItemModifier(new MaterialModifier().setMaterial(Material.DIAMOND_SWORD))
                         .addItemModifier(new NameModifier().setName("&cHello &6{player}"))
                         .addItemModifier(new AmountModifier().setAmount(34))
