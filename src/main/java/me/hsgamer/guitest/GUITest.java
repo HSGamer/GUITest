@@ -55,7 +55,7 @@ public final class GUITest extends JavaPlugin {
         });
 
         holder.setSize(54);
-        holder.setTitle("GUI Test");
+        holder.setTitleFunction(uuid -> "Hello " + Bukkit.getOfflinePlayer(uuid).getName());
         holder.setButton(0, new DummyButton(new ItemStack(Material.STONE)));
         holder.setButton(8, new DummyButton(new ItemStack(Material.COBBLESTONE)));
 
@@ -114,7 +114,7 @@ public final class GUITest extends JavaPlugin {
         }
 
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, holder::updateAll, 0, 0);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, holder::update, 0, 0);
 
         commandManager.register(new BukkitCommand("guitest") {
             @Override
@@ -130,6 +130,6 @@ public final class GUITest extends JavaPlugin {
     @Override
     public void onDisable() {
         commandManager.unregisterAll();
-        holder.clearAll();
+        holder.stop();
     }
 }
