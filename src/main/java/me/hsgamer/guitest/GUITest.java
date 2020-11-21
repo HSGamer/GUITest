@@ -150,12 +150,12 @@ public final class GUITest extends JavaPlugin {
         randomHolder.setTitle("Random");
         randomHolder.setButton(0, new DynamicDummyButton(
                 new ItemBuilder()
-                        .addStringReplacer((original, uuid) -> original.replace("{player}", Bukkit.getOfflinePlayer(uuid).getName()))
-                        .addStringReplacer((original, uuid) -> MessageUtils.colorize(original))
-                        .addItemModifier(new MaterialModifier().setMaterial(Material.DIAMOND_SWORD))
-                        .addItemModifier(new NameModifier().setName("&cHello &6{player}"))
-                        .addItemModifier(new AmountModifier().setAmount(34))
-                        .addItemModifier(new LoreModifier()
+                        .addStringReplacer("player", (original, uuid) -> original.replace("{player}", Bukkit.getOfflinePlayer(uuid).getName()))
+                        .addStringReplacer("colorize", (original, uuid) -> MessageUtils.colorize(original))
+                        .addItemModifier("material", new MaterialModifier().setMaterial(Material.DIAMOND_SWORD))
+                        .addItemModifier("name", new NameModifier().setName("&cHello &6{player}"))
+                        .addItemModifier("amount", new AmountModifier().setAmount(34))
+                        .addItemModifier("lore", new LoreModifier()
                                 .addLore("")
                                 .addLore("This is a lore")
                                 .addLore("")
