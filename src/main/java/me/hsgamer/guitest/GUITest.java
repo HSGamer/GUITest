@@ -162,6 +162,7 @@ public final class GUITest extends JavaPlugin {
                                 .addLore("&7This is another lore")
                                 .addLore("")
                                 .addLore("&eViewer: &b&l{player}")
+                                .addLore("&#123456fTest Hex &#123123Test &bdnwibf")
                         )
         ));
         randomHolder.setButton(1, new AnimatedButton(
