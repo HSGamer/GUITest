@@ -152,8 +152,9 @@ public final class GUITest extends JavaPlugin {
                 new ItemBuilder()
                         .addStringReplacer("player", (original, uuid) -> original.replace("{player}", Bukkit.getOfflinePlayer(uuid).getName()))
                         .addStringReplacer("colorize", (original, uuid) -> MessageUtils.colorize(original))
+                        .addStringReplacer("random", ((original, uuid) -> original.replace("{random}", String.valueOf(ThreadLocalRandom.current().nextInt()))))
                         .addItemModifier(new MaterialModifier().setMaterial(Material.DIAMOND_SWORD))
-                        .addItemModifier(new NameModifier().setName("&cHello &6{player}"))
+                        .addItemModifier(new NameModifier().setName("&cHello &6{player} {random}"))
                         .addItemModifier(new AmountModifier().setAmount(34))
                         .addItemModifier(new LoreModifier()
                                 .addLore("")
@@ -163,6 +164,8 @@ public final class GUITest extends JavaPlugin {
                                 .addLore("")
                                 .addLore("&eViewer: &b&l{player}")
                                 .addLore("&#123456fTest Hex &#123123Test &bdnwibf")
+                                .addLore("Random: {random}")
+                                .addLore("Random: {random}")
                         )
         ));
         randomHolder.setButton(1, new AnimatedButton(
