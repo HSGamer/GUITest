@@ -1,13 +1,14 @@
 package me.hsgamer.guitest;
 
-import me.hsgamer.hscore.bukkit.command.CommandManager;
-import me.hsgamer.hscore.bukkit.gui.Button;
-import me.hsgamer.hscore.bukkit.gui.GUIHolder;
-import me.hsgamer.hscore.bukkit.gui.GUIListener;
-import me.hsgamer.hscore.bukkit.gui.button.AirButton;
-import me.hsgamer.hscore.bukkit.gui.button.AnimatedButton;
+import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
+import me.hsgamer.hscore.bukkit.gui.advanced.GUIHolder;
+import me.hsgamer.hscore.bukkit.gui.advanced.GUIListener;
 import me.hsgamer.hscore.bukkit.gui.button.DummyButton;
-import org.bukkit.Bukkit;
+import me.hsgamer.hscore.bukkit.gui.button.SimpleButton;
+import me.hsgamer.hscore.bukkit.gui.mask.FillMask;
+import me.hsgamer.hscore.bukkit.gui.mask.Mask;
+import me.hsgamer.hscore.bukkit.gui.mask.SingleMask;
+import me.hsgamer.hscore.common.Pair;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,11 +17,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public final class GUITest extends JavaPlugin {
-
-    private final CommandManager commandManager = new CommandManager(this);
+public final class GUITest extends BasePlugin {
     private final GUIHolder holder = new GUIHolder(this) {
         @Override
         public void onOpen(InventoryOpenEvent event) {
@@ -38,33 +36,38 @@ public final class GUITest extends JavaPlugin {
         }
     };
 
+    @Override
+    public void enable() {
+        GUIListener.init(this);
+        initHolder();
+    }
+
+    @Override
+    public void disable() {
+        holder.stop();
+    }
+
     private void initHolder() {
-        holder.setSize(27);
-        Button frame1 = new DummyButton(new ItemStack(Material.STONE));
-        frame1.init();
-        Button frame2 = new DummyButton(new ItemStack(Material.GLASS));
-        frame2.init();
-        Button frame3 = new DummyButton(new ItemStack(Material.GRASS));
-        frame3.init();
-        for (int i = 0; i < 9; i++) {
-            AnimatedButton animatedButton = new AnimatedButton(this, 5L * i, true);
-            animatedButton.addChildButtons(frame1, frame2, frame3);
-            animatedButton.init();
-            holder.setButton(i, animatedButton);
-        }
-        Button button = new DummyButton(new ItemStack(Material.STAINED_GLASS_PANE));
-        button.init();
-        holder.setDefaultButton(button);
-
-        Button airButton = new AirButton((uuid, event) -> holder.removeButton(event.getRawSlot()));
-        button.init();
-        holder.setButton(9, airButton);
-        holder.setButton(17, airButton);
-
+        holder.setSize(54);
+        Mask mask1 = new SingleMask("mask1", 0, new DummyButton(new ItemStack(Material.GLASS)));
+        mask1.init();
+        Mask mask2 = new SingleMask("mask2", 1, new DummyButton(new ItemStack(Material.STONE)));
+        mask2.init();
+        Mask mask3 = new FillMask("mask3", 2, 17, new DummyButton(new ItemStack(Material.REDSTONE)));
+        mask3.init();
+        Mask mask4 = new FillMask("mask4", Pair.of(0, 1), Pair.of(8, 5), new DummyButton(new ItemStack(Material.DIAMOND)));
+        mask4.init();
+        Mask mask5 = new FillMask("mask5", Pair.of(1, 2), Pair.of(7, 4), new SimpleButton(new ItemStack(Material.DIAMOND_SWORD), (uuid, event) -> {
+            getLogger().info(event.getWhoClicked().getName() + " clicked this diamond sword");
+        }));
+        mask5.init();
+        holder.addMask(mask1);
+        holder.addMask(mask2);
+        holder.addMask(mask4);
+        holder.addMask(mask3);
+        holder.addMask(mask5);
         holder.init();
-
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, holder::update, 0, 0);
-        commandManager.register(new Command("guitest") {
+        registerCommand(new Command("guitest") {
             @Override
             public boolean execute(CommandSender sender, String commandLabel, String[] args) {
                 if (sender instanceof Player) {
@@ -73,18 +76,5 @@ public final class GUITest extends JavaPlugin {
                 return true;
             }
         });
-    }
-
-    @Override
-    public void onEnable() {
-        GUIListener.init(this);
-        initHolder();
-    }
-
-    @Override
-    public void onDisable() {
-        Bukkit.getScheduler().cancelTasks(this);
-        commandManager.unregisterAll();
-        holder.stop();
     }
 }
