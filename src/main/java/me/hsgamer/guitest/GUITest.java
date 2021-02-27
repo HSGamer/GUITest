@@ -59,8 +59,9 @@ public final class GUITest extends BasePlugin {
 
         Button button1 = new SimpleButton(new ItemStack(Material.GLASS_BOTTLE), (uuid, event) -> mask2.setButtons(uuid, new AirButton((uuid1, event1) -> event1.getWhoClicked().sendMessage("I'm invisible"))));
         Button button2 = new SimpleButton(new ItemStack(Material.DIAMOND_SWORD), (uuid, event) -> mask2.setButtons(uuid, new DummyButton(new ItemStack(Material.DIAMOND_SWORD))));
-        Button button3 = new SimpleButton(new ItemStack(Material.DIRT), (uuid, event) -> mask2.setButtons(uuid, new AnimatedButton(this, 20, true, Button.EMPTY, new DummyButton(new ItemStack(Material.GLASS)), new DummyButton(new ItemStack(Material.REDSTONE)))));
-        button3.init();
+        Button animatedButton = new AnimatedButton(this, 20, true, Button.EMPTY, new DummyButton(new ItemStack(Material.GLASS)), new DummyButton(new ItemStack(Material.REDSTONE)));
+        animatedButton.init();
+        Button button3 = new SimpleButton(new ItemStack(Material.DIRT), (uuid, event) -> mask2.setButtons(uuid, animatedButton));
 
         holder.addMask(mask1);
         holder.addMask(mask2);
