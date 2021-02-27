@@ -6,8 +6,9 @@ import me.hsgamer.hscore.bukkit.gui.advanced.GUIListener;
 import me.hsgamer.hscore.bukkit.gui.button.DummyButton;
 import me.hsgamer.hscore.bukkit.gui.button.SimpleButton;
 import me.hsgamer.hscore.bukkit.gui.mask.Mask;
-import me.hsgamer.hscore.bukkit.gui.mask.RectangleMask;
-import me.hsgamer.hscore.bukkit.gui.mask.SingleMask;
+import me.hsgamer.hscore.bukkit.gui.mask.MaskUtils;
+import me.hsgamer.hscore.bukkit.gui.mask.simple.MultiSlotsMask;
+import me.hsgamer.hscore.bukkit.gui.mask.simple.SingleMask;
 import me.hsgamer.hscore.common.Pair;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -17,6 +18,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
 
 public final class GUITest extends BasePlugin {
     private final GUIHolder holder = new GUIHolder(this) {
@@ -53,11 +56,11 @@ public final class GUITest extends BasePlugin {
         mask1.init();
         Mask mask2 = new SingleMask("mask2", 1, new DummyButton(new ItemStack(Material.STONE)));
         mask2.init();
-        Mask mask3 = new RectangleMask("mask3", 2, 8, new DummyButton(new ItemStack(Material.REDSTONE)));
+        Mask mask3 = new MultiSlotsMask("mask3", MaskUtils.generateAreaSlots(MaskUtils.toPosition(2), MaskUtils.toPosition(8)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll), new DummyButton(new ItemStack(Material.REDSTONE)));
         mask3.init();
-        Mask mask4 = new RectangleMask("mask4", Pair.of(0, 1), Pair.of(8, 5), new DummyButton(new ItemStack(Material.DIAMOND)));
+        Mask mask4 = new MultiSlotsMask("mask4", MaskUtils.generateAreaSlots(Pair.of(0, 1), Pair.of(8, 5)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll), new DummyButton(new ItemStack(Material.DIAMOND)));
         mask4.init();
-        Mask mask5 = new RectangleMask("mask5", Pair.of(1, 2), Pair.of(7, 4), new SimpleButton(new ItemStack(Material.DIAMOND_SWORD), (uuid, event) -> {
+        Mask mask5 = new MultiSlotsMask("mask5", MaskUtils.generateAreaSlots(Pair.of(1, 2), Pair.of(7, 4)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll), new SimpleButton(new ItemStack(Material.DIAMOND_SWORD), (uuid, event) -> {
             getLogger().info(event.getWhoClicked().getName() + " clicked this diamond sword");
         }));
         mask5.init();
