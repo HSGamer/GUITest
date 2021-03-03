@@ -1,8 +1,8 @@
 package me.hsgamer.guitest;
 
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
-import me.hsgamer.hscore.bukkit.gui.advanced.GUIHolder;
-import me.hsgamer.hscore.bukkit.gui.advanced.GUIListener;
+import me.hsgamer.hscore.bukkit.gui.GUIListener;
+import me.hsgamer.hscore.bukkit.gui.advanced.AdvancedGUIHolder;
 import me.hsgamer.hscore.bukkit.gui.button.*;
 import me.hsgamer.hscore.bukkit.gui.mask.Mask;
 import me.hsgamer.hscore.bukkit.gui.mask.MaskUtils;
@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 
 public final class GUITest extends BasePlugin {
-    private final GUIHolder holder = new GUIHolder(this) {
+    private final AdvancedGUIHolder holder = new AdvancedGUIHolder(this) {
         @Override
         public void onOpen(InventoryOpenEvent event) {
             getLogger().info(event.getPlayer().getName() + " opened the menu");
@@ -52,14 +52,14 @@ public final class GUITest extends BasePlugin {
 
     private void initHolder() {
         holder.setSize(54);
-        Mask mask1 = new MultiSlotsMask("mask1", MaskUtils.generateAreaSlots(0, 1, 8, 5).collect(ArrayList::new, ArrayList::add, ArrayList::addAll), new DummyButton(new ItemStack(Material.STAINED_GLASS_PANE)));
+        Mask mask1 = new MultiSlotsMask("mask1", MaskUtils.generateOutlineSlots(0, 1, 8, 5).collect(ArrayList::new, ArrayList::add, ArrayList::addAll), new DummyButton(new ItemStack(Material.STAINED_GLASS_PANE)));
         mask1.init();
         MultiUserMultiSlotsMask mask2 = new MultiUserMultiSlotsMask("mask2", MaskUtils.generateAreaSlots(1, 2, 7, 4).collect(ArrayList::new, ArrayList::add, ArrayList::addAll), Button.EMPTY);
         mask2.init();
 
         Button button1 = new SimpleButton(new ItemStack(Material.GLASS_BOTTLE), (uuid, event) -> mask2.setButtons(uuid, new AirButton((uuid1, event1) -> event1.getWhoClicked().sendMessage("I'm invisible"))));
         Button button2 = new SimpleButton(new ItemStack(Material.DIAMOND_SWORD), (uuid, event) -> mask2.setButtons(uuid, new DummyButton(new ItemStack(Material.DIAMOND_SWORD))));
-        Button animatedButton = new AnimatedButton(this, 20, true, Button.EMPTY, new DummyButton(new ItemStack(Material.GLASS)), new DummyButton(new ItemStack(Material.REDSTONE)));
+        Button animatedButton = new AnimatedButton(this, 20, true, new AirButton((uuid, event) -> {}), new DummyButton(new ItemStack(Material.GLASS)), new DummyButton(new ItemStack(Material.REDSTONE)));
         animatedButton.init();
         Button button3 = new SimpleButton(new ItemStack(Material.DIRT), (uuid, event) -> mask2.setButtons(uuid, animatedButton));
 
