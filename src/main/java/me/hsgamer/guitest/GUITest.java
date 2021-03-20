@@ -8,6 +8,9 @@ import me.hsgamer.hscore.bukkit.gui.mask.MaskUtils;
 import me.hsgamer.hscore.bukkit.gui.mask.impl.ButtonPaginatedMask;
 import me.hsgamer.hscore.bukkit.gui.mask.impl.MaskPaginatedMask;
 import me.hsgamer.hscore.bukkit.gui.mask.impl.SingleMask;
+import me.hsgamer.hscore.bukkit.item.ItemBuilder;
+import me.hsgamer.hscore.bukkit.item.modifier.LoreModifier;
+import me.hsgamer.hscore.bukkit.item.modifier.MaterialModifier;
 import me.hsgamer.hscore.ui.Position2D;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -58,7 +61,12 @@ public final class GUITest extends BasePlugin {
             ButtonPaginatedMask buttonPaginatedMask = new ButtonPaginatedMask("button_paginated_mask_" + i, MaskUtils.generateAreaSlots(1, 0, 7, 5).collect(ArrayList::new, ArrayList::add, ArrayList::addAll));
             for (Material material : Material.values()) {
                 if (material.isItem() && !material.isAir()) {
-                    buttonPaginatedMask.addButtons(new SimpleButton(new ItemStack(material), (uuid, event) -> event.getWhoClicked().sendMessage(material.name())));
+                    ItemStack itemStack = new ItemBuilder()
+                            .addItemModifier(new MaterialModifier().setMaterial(material))
+                            .addItemModifier(new LoreModifier()
+                                    .addLore("\n" + material.name() + "\nTest")
+                            ).build();
+                    buttonPaginatedMask.addButtons(new SimpleButton(itemStack, (uuid, event) -> event.getWhoClicked().sendMessage(material.name())));
                 }
             }
             maskPaginatedMask.addMasks(buttonPaginatedMask);
