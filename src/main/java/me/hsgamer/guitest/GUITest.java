@@ -6,7 +6,6 @@ import me.hsgamer.hscore.bukkit.gui.advanced.AdvancedGUIHolder;
 import me.hsgamer.hscore.bukkit.gui.button.impl.DummyButton;
 import me.hsgamer.hscore.bukkit.gui.button.impl.SimpleButton;
 import me.hsgamer.hscore.bukkit.gui.mask.MaskUtils;
-import me.hsgamer.hscore.bukkit.gui.mask.impl.ButtonPaginatedMask;
 import me.hsgamer.hscore.bukkit.gui.mask.impl.SequencePaginatedMask;
 import me.hsgamer.hscore.bukkit.gui.mask.impl.SingleMask;
 import me.hsgamer.hscore.ui.Position2D;
