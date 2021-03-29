@@ -6,6 +6,7 @@ import me.hsgamer.hscore.bukkit.gui.advanced.AdvancedGUIHolder;
 import me.hsgamer.hscore.bukkit.gui.button.impl.DummyButton;
 import me.hsgamer.hscore.bukkit.gui.button.impl.SimpleButton;
 import me.hsgamer.hscore.bukkit.gui.mask.MaskUtils;
+import me.hsgamer.hscore.bukkit.gui.mask.impl.ButtonPaginatedMask;
 import me.hsgamer.hscore.bukkit.gui.mask.impl.SequencePaginatedMask;
 import me.hsgamer.hscore.bukkit.gui.mask.impl.SingleMask;
 import me.hsgamer.hscore.ui.Position2D;
@@ -54,17 +55,28 @@ public final class GUITest extends BasePlugin {
         holder.setSize(54);
 
         SequencePaginatedMask sequencePaginatedMask = new SequencePaginatedMask("button_mask", MaskUtils.generateAreaSlots(0, 0, 8, 4).collect(ArrayList::new, ArrayList::add , ArrayList::addAll));
+        ButtonPaginatedMask buttonPaginatedMask = new ButtonPaginatedMask("button_mask_2", MaskUtils.generateAreaSlots(1, 5, 7, 5).collect(ArrayList::new, ArrayList::add , ArrayList::addAll));
         for (Material material : Material.values()) {
             if (material.isItem() && !material.isAir()) {
                 sequencePaginatedMask.addButtons(new DummyButton(new ItemStack(material)));
+                buttonPaginatedMask.addButtons(new DummyButton(new ItemStack(material)));
             }
         }
         sequencePaginatedMask.setCycle(true);
         sequencePaginatedMask.init();
-        SingleMask previous = new SingleMask("pre", Position2D.of(0, 5), new SimpleButton(new ItemStack(Material.RED_STAINED_GLASS_PANE), (uuid, inventoryClickEvent) -> sequencePaginatedMask.previousPage(uuid)));
-        SingleMask next = new SingleMask("next", Position2D.of(8, 5), new SimpleButton(new ItemStack(Material.GREEN_STAINED_GLASS_PANE), (uuid, inventoryClickEvent) -> sequencePaginatedMask.nextPage(uuid)));
+        buttonPaginatedMask.setCycle(true);
+        buttonPaginatedMask.init();
+        SingleMask previous = new SingleMask("pre", Position2D.of(0, 5), new SimpleButton(new ItemStack(Material.RED_STAINED_GLASS_PANE), (uuid, inventoryClickEvent) -> {
+            sequencePaginatedMask.previousPage(uuid);
+            buttonPaginatedMask.previousPage(uuid);
+        }));
+        SingleMask next = new SingleMask("next", Position2D.of(8, 5), new SimpleButton(new ItemStack(Material.GREEN_STAINED_GLASS_PANE), (uuid, inventoryClickEvent) -> {
+            sequencePaginatedMask.nextPage(uuid);
+            buttonPaginatedMask.nextPage(uuid);
+        }));
 
         holder.addMask(sequencePaginatedMask);
+        holder.addMask(buttonPaginatedMask);
         holder.addMask(previous);
         holder.addMask(next);
         holder.init();
