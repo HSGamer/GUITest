@@ -2,7 +2,10 @@ package me.hsgamer.guitest;
 
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.hscore.bukkit.gui.GUIListener;
+import me.hsgamer.hscore.bukkit.gui.GUIUtils;
 import me.hsgamer.hscore.bukkit.gui.button.impl.DummyButton;
+import me.hsgamer.hscore.bukkit.gui.button.impl.InputButton;
+import me.hsgamer.hscore.bukkit.gui.button.impl.OutputButton;
 import me.hsgamer.hscore.bukkit.gui.button.impl.SimpleButton;
 import me.hsgamer.hscore.bukkit.gui.simple.SimpleGUIHolder;
 import org.bukkit.Material;
@@ -24,25 +27,25 @@ public final class GUITest extends BasePlugin {
 
     private void initHolder() {
         SimpleGUIHolder simpleGUIHolder = new UpdateGUIHolder(this);
-        simpleGUIHolder.allowMoveItemOnBottom();
-        simpleGUIHolder.cancelDragEvent();
+        GUIUtils.allowMoveItemOnBottom(simpleGUIHolder);
+        GUIUtils.cancelDragEvent(simpleGUIHolder);
         simpleGUIHolder.setSize(9);
         simpleGUIHolder.setDefaultButton(new DummyButton(new ItemStack(Material.GRAY_STAINED_GLASS_PANE)));
         simpleGUIHolder.init();
 
         InputButton input = new InputButton();
+        input.setDisplayItemFunction((uuid, itemStack) -> Optional.ofNullable(itemStack).orElse(new ItemStack(Material.GREEN_STAINED_GLASS_PANE)));
         OutputButton output = new OutputButton();
-        SimpleButton convert = new SimpleButton(new ItemStack(Material.GRASS_BLOCK), (uuid, event) -> {
-            Optional.ofNullable(input.getStoreItem(uuid))
-                    .map(ItemStack::clone)
-                    .ifPresent(itemStack -> {
-                        ItemMeta meta = itemStack.getItemMeta();
-                        meta.setDisplayName("CONVERTED");
-                        itemStack.setItemMeta(meta);
-                        output.setItemStack(uuid, itemStack);
-                        input.removeStoreItem(uuid);
-                    });
-        });
+        output.setDisplayItemFunction((uuid, itemStack) -> Optional.ofNullable(itemStack).orElse(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
+        SimpleButton convert = new SimpleButton(new ItemStack(Material.GRASS_BLOCK), (uuid, event) -> Optional.ofNullable(input.getInputItem(uuid))
+                .map(ItemStack::clone)
+                .ifPresent(itemStack -> {
+                    ItemMeta meta = itemStack.getItemMeta();
+                    meta.setDisplayName("CONVERTED");
+                    itemStack.setItemMeta(meta);
+                    output.setOutputItem(uuid, itemStack);
+                    input.setInputItem(uuid, null);
+                }));
 
         simpleGUIHolder.setButton(3, input);
         simpleGUIHolder.setButton(4, convert);
