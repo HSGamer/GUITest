@@ -2,3 +2,5 @@ name: GUITest
 version: ${project.version}
 main: me.hsgamer.guitest.GUITest
 api-version: 1.13
+depend:
+  - LibbyLoader
