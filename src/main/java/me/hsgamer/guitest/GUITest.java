@@ -2,7 +2,6 @@ package me.hsgamer.guitest;
 
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.libbyloader.LibbyLoaderAPI;
-import me.hsgamer.libbyloader.LibraryManagerWrapper;
 import net.byteflux.libby.Library;
 
 public final class GUITest extends BasePlugin {
@@ -10,9 +9,8 @@ public final class GUITest extends BasePlugin {
 
     @Override
     public void load() {
-        LibraryManagerWrapper manager = LibbyLoaderAPI.getManager();
-        manager.addRepository("https://repo.codemc.io/repository/maven-public/");
-        manager.addLibrary(
+        LibbyLoaderAPI.loadRepository("https://repo.codemc.io/repository/maven-public/");
+        LibbyLoaderAPI.loadLibrary(
                 Library.builder()
                         .groupId("me.HSGamer")
                         .artifactId("HSCore-bukkit-item")
