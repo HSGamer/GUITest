@@ -5,10 +5,9 @@ import me.hsgamer.libbyloader.LibbyLoaderAPI;
 import net.byteflux.libby.Library;
 
 public final class GUITest extends BasePlugin {
-    private RegisterGUI registerGUI;
+    private final RegisterGUI registerGUI = new RegisterGUI(this);
 
-    @Override
-    public void load() {
+    static {
         LibbyLoaderAPI.loadRepository("https://repo.codemc.io/repository/maven-public/");
         LibbyLoaderAPI.loadLibrary(
                 Library.builder()
@@ -24,8 +23,6 @@ public final class GUITest extends BasePlugin {
                         .version("3.17")
                         .build()
         );
-
-        registerGUI = new RegisterGUI(this);
     }
 
     @Override
