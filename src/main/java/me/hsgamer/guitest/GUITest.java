@@ -1,28 +1,17 @@
 package me.hsgamer.guitest;
 
-import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
-import me.hsgamer.libbyloader.LibbyLoaderAPI;
-import net.byteflux.libby.Library;
+import io.github.projectunified.minelib.plugin.base.BasePlugin;
+import io.github.projectunified.minelib.plugin.command.CommandComponent;
+
+import java.util.Collections;
+import java.util.List;
 
 public final class GUITest extends BasePlugin {
     private final RegisterGUI registerGUI = new RegisterGUI(this);
 
-    static {
-        LibbyLoaderAPI.loadRepository("https://repo.codemc.io/repository/maven-public/");
-        LibbyLoaderAPI.loadLibrary(
-                Library.builder()
-                        .groupId("me.HSGamer")
-                        .artifactId("HSCore-bukkit-item")
-                        .classifier("jar-with-dependencies")
-                        .version("3.17")
-                        .build(),
-                Library.builder()
-                        .groupId("me.HSGamer")
-                        .artifactId("HSCore-bukkit-gui-simple")
-                        .classifier("jar-with-dependencies")
-                        .version("3.17")
-                        .build()
-        );
+    @Override
+    protected List<Object> getComponents() {
+        return Collections.singletonList(new CommandComponent(this));
     }
 
     @Override

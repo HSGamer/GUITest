@@ -13,7 +13,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <core.version>3.17</core.version>
+        <core.version>4.5.7</core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -22,11 +22,51 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <shadeSourcesContent>true</shadeSourcesContent>
+                            <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/maven/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <!-- HSCore -->
+                                <relocation>
+                                    <pattern>me.hsgamer.hscore</pattern>
+                                    <shadedPattern>me.hsgamer.guitest.lib.core</shadedPattern>
+                                </relocation>
+
+                                <!-- MineLib -->
+                                <relocation>
+                                    <pattern>io.github.projectunified.minelib</pattern>
+                                    <shadedPattern>me.hsgamer.guitest.lib.minelib</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>
@@ -56,22 +96,24 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-plugin-command</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+        <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>libby-loader-bukkit</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
+            <artifactId>hscore-minecraft-gui-simple</artifactId>
+            <version>${core.version}</version>
         </dependency>
         <dependency>
-            <groupId>me.HSGamer</groupId>
-            <artifactId>HSCore-bukkit-item</artifactId>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-bukkit-gui</artifactId>
             <version>${core.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.HSGamer</groupId>
-            <artifactId>HSCore-bukkit-gui-simple</artifactId>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-bukkit-gui-button</artifactId>
             <version>${core.version}</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
